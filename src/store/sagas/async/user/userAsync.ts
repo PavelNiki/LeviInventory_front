@@ -1,36 +1,25 @@
-import axios from "axios";
+import instance from "..";
 import { User } from "../../../../types/user";
 
 class UserAsyncRequest {
   getAll = async (): Promise<User[]> => {
-    return await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users/all`);
+    return await instance.get(`/users/all`);
   };
-  getOne = async (id: string): Promise<User> => {
-    return await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users/${id}`);
+  getOne = async (id: number): Promise<User> => {
+    return await instance.get(`/users/${id}`);
   };
   addUser = async (user: User): Promise<User> => {
-    return await axios.post(
-      `${process.env.REACT_APP_BACKEND_URL}/users/add`,
-      user
-    );
+    return await instance.post(`$/users/add`, user);
   };
-  deleteOneUser = async (id: string): Promise<User> => {
-    return await axios.get(
-      `${process.env.REACT_APP_BACKEND_URL}/users/delete/${id}`
-    );
+  deleteOneUser = async (id: number): Promise<User> => {
+    return await instance.get(`$/users/delete/${id}`);
   };
   updateOneUser = async (user: User): Promise<User> => {
-    return await axios.patch(
-      `${process.env.REACT_APP_BACKEND_URL}/users/update`,
-      user
-    );
+    return await instance.patch(`$/users/update`, user);
   };
   signIn = async (user: { email: string; password: string }) => {
     try {
-      const condidate = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/auth/login`,
-        user
-      );
+      const condidate = await instance.post(`/auth/login`, user);
       if (condidate) {
         localStorage.setItem("token", condidate.headers?.authorization);
       }

@@ -1,84 +1,85 @@
-import {
-  AddOneUser,
-  GetOneUser,
-  UpdateOneUser,
-  DeleteOneUser,
-  SignIn,
-} from "./../../../types/user";
+import { Action } from "typescript-fsa";
+import { bindAsyncAction } from "typescript-fsa-redux-saga";
+import { call, takeLatest, all } from "redux-saga/effects";
 import { SagaIterator } from "redux-saga";
-import { all, call, put, takeLatest } from "redux-saga/effects";
-import { UserActionTypes } from "../../../types/user";
-import userActionCreators from "../../actions/user/user";
-import userAsyncRequest from "../async/user/userAsync";
-function* allUsersSaga(): SagaIterator {
-  try {
-    const response = yield call(userAsyncRequest.getAll);
-    yield put(userActionCreators.getAllUsersSuccess(response.data));
-  } catch (error) {
-    yield put(userActionCreators.getAllUsersError(error as string));
-    console.error();
-  }
-}
-function* oneUserSaga(action: GetOneUser): SagaIterator {
-  try {
-    const response = yield call(userAsyncRequest.getOne, action.payload);
-    yield put(userActionCreators.getOneUserSuccess(response.data));
-  } catch (error) {
-    yield put(userActionCreators.getOneUserError(error as string));
-    console.error();
-  }
-}
-function* addOneUser(action: AddOneUser): SagaIterator {
-  try {
-    const response = yield call(userAsyncRequest.addUser, action.payload);
-    yield put(userActionCreators.addOneUserSuccess(response.data));
-  } catch (error) {
-    yield put(userActionCreators.addOneUserError(error as string));
-    console.error();
-  }
-}
-function* deleteOneUser(action: DeleteOneUser): SagaIterator {
-  try {
-    const response = yield call(userAsyncRequest.deleteOneUser, action.payload);
-    yield put(userActionCreators.deleteOneUserSucess(response.data));
-  } catch (error) {
-    yield put(userActionCreators.deleteOneUserError(error as string));
-  }
-}
-function* updateOneUser(action: UpdateOneUser): SagaIterator {
-  try {
-    const response = yield call(userAsyncRequest.updateOneUser, action.payload);
-    yield put(userActionCreators.updateOneUserSuccess(response.data));
-  } catch (error) {
-    yield put(userActionCreators.updateOneUserError(error as string));
-  }
-}
-function* signIn(action: SignIn): SagaIterator {
-  try {
-    const response = yield call(userAsyncRequest.signIn, action.payload);
-    yield put(userActionCreators.signInSuccess(response.data));
-  } catch (error) {
-    yield put(userActionCreators.signInError(error as string));
-  }
-}
+import { AxiosResponse } from "axios";
+import userAction from "../../actions/user/user";
+import userAsync from "../async/user/userAsync";
+import { User } from "../../../types/user";
+
+
+const getAllUsers=bindAsyncAction(userAction.getAllUsers,{skipStartedAction:true})(function *():SagaIterator {
+const response:AxiosResponse<User[]>=yield call(userAsync.getAll)
+return response.data
+})
+
+const getOneUser = bindAsyncAction(userAction.getOneUser, {
+  skipStartedAction: true,
+})(function* (id): SagaIterator {
+  const response: AxiosResponse<User> = yield call(userAsync.getOne,id);
+  return response.data;
+});
+
+const addOneUser = bindAsyncAction(userAction.addOneUser, {
+  skipStartedAction: true,
+})(function* (user): SagaIterator {
+  const response: AxiosResponse<User> = yield call(userAsync.addUser, user);
+  return response.data;
+});
+
+const deleteOneUser = bindAsyncAction(userAction.deleteOneUser {
+  skipStartedAction: true,
+})(function* (id): SagaIterator {
+  const response: AxiosResponse<User> = yield call(userAsync.deleteOneUser, id);
+  return response.data;
+});
+
+const updateOneUser = bindAsyncAction(userAction.updateOneUser, {
+  skipStartedAction: true,
+})(function* (user): SagaIterator {
+  const response: AxiosResponse<User> = yield call(userAsync.updateOneUser, user);
+  return response.data;
+});
+
+const signIn = bindAsyncAction(userAction.signIn, {
+  skipStartedAction: true,
+})(function* (user): SagaIterator {
+  const response: AxiosResponse<User> = yield call(userAsync.signIn, user);
+  return response.data;
+});
+
 
 function* signInWatcherSaga() {
-  yield takeLatest(UserActionTypes.SIGN_IN, signIn);
+  yield takeLatest(userAction.signIn.started,(action:Action<{email:string,password:string}>)=>{
+    return signIn(action.payload)
+  } );
 }
 function* updateOneUserWatcherSags() {
-  yield takeLatest(UserActionTypes.UPDATE_ONE_USER, updateOneUser);
+  yield takeLatest(userAction.updateOneUser.started,(action:Action<User>)=>{
+  return  updateOneUser(action.payload)
+    
+  } 
+  );
 }
 function* deleteOneUserWatcherSags() {
-  yield takeLatest(UserActionTypes.DELETE_ONE_USER, deleteOneUser);
+  yield takeLatest(userAction.deleteOneUser.started,(action:Action<number>)=>{
+
+   return deleteOneUser(action.payload)
+  }
+   );
 }
 function* allUsersWatcherSaga() {
-  yield takeLatest(UserActionTypes.GET_ALL_USERS, allUsersSaga);
+  yield takeLatest(userAction.getAllUsers.started, getAllUsers);
 }
 function* oneUsersWatcherSaga() {
-  yield takeLatest(UserActionTypes.GET_ONE_USER, oneUserSaga);
+  yield takeLatest(userAction.getOneUser.started,(action:Action<number>)=>{
+   return getOneUser(action.payload)
+  } );
 }
 function* addOneUserWatcherSaga() {
-  yield takeLatest(UserActionTypes.ADD_ONE_USER, addOneUser);
+   yield takeLatest(userAction.addOneUser.started,(action:Action<User>)=>{
+   return addOneUser(action.payload)
+  } );
 }
 
 export default function* usersWatcherSaga() {

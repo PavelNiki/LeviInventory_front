@@ -1,9 +1,6 @@
-import {
-  InventoryAction,
-  InventoryActionTypes,
-  InventoryState,
-} from "../../types/inventory";
-
+import { InventoryState } from "../../types/inventory";
+import inventoryAction from "../actions/inventory/inventory";
+import { reducerWithInitialState } from "typescript-fsa-reducers";
 const initialState: InventoryState = {
   inventory: [],
   loading: false,
@@ -12,139 +9,191 @@ const initialState: InventoryState = {
   inventoryList: null,
   error: null,
 };
-export const inventoryReducer = (
-  state = initialState,
-  action: InventoryAction
-) => {
-  switch (action.type) {
-    case InventoryActionTypes.GET_ALL_INVENTORY:
-      return {
-        ...state,
-        loading: true,
-      };
-    case InventoryActionTypes.GET_ALL_INVENTORY_SUCCESS:
-      return {
-        ...state,
-        inventory: action.payload,
-        loading: false,
-        error: null,
-      };
-    case InventoryActionTypes.GET_ALL_INVENTORY_ERROR:
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
-    case InventoryActionTypes.GET_FREE_INVENTORY:
-      return {
-        ...state,
-
-        loading: true,
-      };
-    case InventoryActionTypes.GET_FREE_INVENTORY_SUCCESS:
-      return {
-        ...state,
-        freeInventory: action.payload,
-        loading: false,
-      };
-    case InventoryActionTypes.GET_FREE_INVENTORY_ERROR:
-      return {
-        ...state,
-        error: action.payload,
-        loading: false,
-      };
-    case InventoryActionTypes.UPDATE_ONE_INVENTORY:
-      return {
-        ...state,
-        loading: true,
-      };
-    case InventoryActionTypes.UPDATE_ONE_INVENTORY_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        currentInventory: action.payload,
-      };
-    case InventoryActionTypes.UPDATE_ONE_INVENTORY_ERROR:
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
-    case InventoryActionTypes.MAKE_AN_INVENTORY:
-      return {
-        ...state,
-        loading: true,
-      };
-    case InventoryActionTypes.MAKE_AN_INVENTORY_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        inventoryList: action.payload,
-      };
-    case InventoryActionTypes.MAKE_AN_INVENTORY_ERROR:
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
-    case InventoryActionTypes.ADD_MANY_INVENTORY:
-      return {
-        ...state,
-        loading: true,
-      };
-    case InventoryActionTypes.ADD_MANY_INVENTORY_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        inventory: action.payload,
-      };
-    case InventoryActionTypes.ADD_MANY_INVENTORY_ERROR:
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
-    case InventoryActionTypes.ADD_ONE_INVENTORY: {
+export const invenoryReducer = reducerWithInitialState(initialState)
+  .case(
+    inventoryAction.addManyInventoryItems.started,
+    (state): InventoryState => {
       return {
         ...state,
         loading: true,
       };
     }
-    case InventoryActionTypes.ADD_ONE_INVENTORY_SUCCESS: {
+  )
+  .case(inventoryAction.addManyInventoryItems.done, (state): InventoryState => {
+    return {
+      ...state,
+      loading: false,
+    };
+  })
+  .case(
+    inventoryAction.addManyInventoryItems.failed,
+    (state, payload): InventoryState => {
       return {
         ...state,
         loading: false,
-        currentInventory: action.payload,
+        error: payload.error,
       };
     }
-    case InventoryActionTypes.ADD_ONE_INVENTORY_ERROR: {
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
-    }
-    case InventoryActionTypes.DELETE_ONE_INVENTORY: {
+  )
+  .case(
+    inventoryAction.addOneInventoryItem.started,
+    (state): InventoryState => {
       return {
         ...state,
         loading: true,
       };
     }
-    case InventoryActionTypes.DELETE_ONE_INVENTORY_SUCCESS: {
+  )
+  .case(
+    inventoryAction.addOneInventoryItem.done,
+    (state, payload): InventoryState => {
       return {
         ...state,
         loading: false,
-        currentInventory: action.payload,
+        currentInventory: payload.result,
       };
     }
-    case InventoryActionTypes.DELETE_ONE_INVENTORY_ERROR: {
+  )
+  .case(
+    inventoryAction.addOneInventoryItem.failed,
+    (state, payload): InventoryState => {
       return {
         ...state,
         loading: false,
-        error: action.payload,
+        error: payload.error,
       };
     }
-    default:
-      return state;
-  }
-};
+  )
+  .case(inventoryAction.deleteOneInventory.started, (state): InventoryState => {
+    return {
+      ...state,
+      loading: true,
+    };
+  })
+  .case(
+    inventoryAction.deleteOneInventory.done,
+    (state, payload): InventoryState => {
+      return {
+        ...state,
+        loading: false,
+        currentInventory: payload.result,
+      };
+    }
+  )
+  .case(
+    inventoryAction.deleteOneInventory.failed,
+    (state, payload): InventoryState => {
+      return {
+        ...state,
+        loading: false,
+        error: payload.error,
+      };
+    }
+  )
+  .case(inventoryAction.getAllInventory.started, (state): InventoryState => {
+    return {
+      ...state,
+      loading: true,
+    };
+  })
+  .case(
+    inventoryAction.getAllInventory.done,
+    (state, payload): InventoryState => {
+      return {
+        ...state,
+        loading: false,
+        inventory: payload.result,
+      };
+    }
+  )
+  .case(
+    inventoryAction.getAllInventory.failed,
+    (state, payload): InventoryState => {
+      return {
+        ...state,
+        loading: false,
+        error: payload.error,
+      };
+    }
+  )
+  .case(inventoryAction.getFreeInventory.started, (state): InventoryState => {
+    return {
+      ...state,
+      loading: true,
+    };
+  })
+  .case(
+    inventoryAction.getFreeInventory.done,
+    (state, payload): InventoryState => {
+      return {
+        ...state,
+        loading: false,
+        freeInventory: payload.result,
+      };
+    }
+  )
+  .case(
+    inventoryAction.getFreeInventory.failed,
+    (state, payload): InventoryState => {
+      return {
+        ...state,
+        loading: false,
+        error: payload.error,
+      };
+    }
+  )
+  .case(inventoryAction.makeInventory.started, (state): InventoryState => {
+    return {
+      ...state,
+      loading: true,
+    };
+  })
+  .case(
+    inventoryAction.makeInventory.done,
+    (state, payload): InventoryState => {
+      return {
+        ...state,
+        loading: false,
+        inventoryList: payload.result,
+      };
+    }
+  )
+  .case(
+    inventoryAction.makeInventory.failed,
+    (state, payload): InventoryState => {
+      return {
+        ...state,
+        loading: false,
+        error: payload.error,
+      };
+    }
+  )
+  .case(
+    inventoryAction.updateInventoryItem.started,
+    (state): InventoryState => {
+      return {
+        ...state,
+        loading: true,
+      };
+    }
+  )
+  .case(
+    inventoryAction.updateInventoryItem.done,
+    (state, payload): InventoryState => {
+      return {
+        ...state,
+        loading: false,
+        currentInventory: payload.result,
+      };
+    }
+  )
+  .case(
+    inventoryAction.updateInventoryItem.failed,
+    (state, payload): InventoryState => {
+      return {
+        ...state,
+        loading: false,
+        error: payload.error,
+      };
+    }
+  );

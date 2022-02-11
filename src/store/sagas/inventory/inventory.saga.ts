@@ -1,143 +1,129 @@
 import { SagaIterator } from "redux-saga";
 import { all, call, put, takeLatest } from "redux-saga/effects";
 import inventoryAsync from "../async/inventory/inventoryAsync";
-import inventoryActionCreators from "../../actions/inventory/inventory";
-import {
-  AddManyInventoryItem,
-  AddOneInventoryItem,
-  DeleteOneInventory,
-  InventoryActionTypes,
-  MakeInventory,
-  UpdateOneInventoryItem,
-} from "../../../types/inventory";
+import inventoryAction from "../../actions/inventory/inventory";
+import { bindAsyncAction } from "typescript-fsa-redux-saga";
+import { AxiosResponse } from "axios";
+import { Action } from "typescript-fsa";
+import { Inventory } from "../../../types/inventory";
+import { tuple } from "antd/lib/_util/type";
 
-function* allInventorySaga(): SagaIterator {
-  try {
-    const response = yield call(inventoryAsync.getAllInventory);
-    yield put(inventoryActionCreators.getAllInventorySuccess(response.data));
-  } catch (error) {
-    yield put(inventoryActionCreators.getAllInventoryError(error as string));
-    console.error();
-  }
-}
+const allInventory = bindAsyncAction(inventoryAction.getAllInventory, {
+  skipStartedAction: true,
+})(function* (): SagaIterator {
+  const response: AxiosResponse<Inventory[]> = yield call(
+    inventoryAsync.getAllInventory
+  );
+  return response.data;
+});
 
-function* freeInventorySaga(): SagaIterator {
-  try {
-    const response = yield call(inventoryAsync.getFreeInventory);
-    yield put(inventoryActionCreators.getFreeInventorySuccess(response.data));
-  } catch (error) {
-    yield put(inventoryActionCreators.getFreeInventoryError(error as string));
-    console.error();
-  }
-}
+const freeInventory = bindAsyncAction(inventoryAction.getFreeInventory, {
+  skipStartedAction: true,
+})(function* (): SagaIterator {
+  const response: AxiosResponse<Inventory | Inventory[]> = yield call(
+    inventoryAsync.getFreeInventory
+  );
+  return response.data;
+});
 
-function* makeInventorySaga(action: MakeInventory): SagaIterator {
-  try {
-    const response = yield call(inventoryAsync.makeInventory, action.payload);
-    yield put(inventoryActionCreators.makeInventorySuccess(response.data));
-  } catch (error) {
-    yield put(inventoryActionCreators.makeInventoryError(error as string));
-    console.error();
-  }
-}
+const makeInventory = bindAsyncAction(inventoryAction.makeInventory, {
+  skipStartedAction: true,
+})(function* (inventoryList): SagaIterator {
+  const response: AxiosResponse<Inventory | Inventory[]> = yield call(
+    inventoryAsync.makeInventory,
+    inventoryList
+  );
+  return response.data;
+});
 
-function* addOneInventoryItemSaga(action: AddOneInventoryItem): SagaIterator {
-  try {
-    const response = yield call(
-      inventoryAsync.addOneInventoryItem,
-      action.payload
-    );
-    yield put(inventoryActionCreators.addOneInventoryItem(response.data));
-  } catch (error) {
-    yield put(
-      inventoryActionCreators.addOneInventoryItemError(error as string)
-    );
-    console.error();
-  }
-}
+const addOneInventoryItem = bindAsyncAction(
+  inventoryAction.addOneInventoryItem,
+  { skipStartedAction: true }
+)(function* (inventoryItem): SagaIterator {
+  const response: AxiosResponse<Inventory> = yield call(
+    inventoryAsync.addOneInventoryItem,
+    inventoryItem
+  );
+  return response.data;
+});
 
-function* addManyInventoryItemsSaga(
-  action: AddManyInventoryItem
-): SagaIterator {
-  try {
-    const response = yield call(
-      inventoryAsync.addManyInventoryItems,
-      action.payload
-    );
-    yield put(
-      inventoryActionCreators.addManyInventoryItemsSuccess(response.data)
-    );
-  } catch (error) {
-    yield put(
-      inventoryActionCreators.addManyInventoryItemsError(error as string)
-    );
-    console.error();
-  }
-}
+const addManyInventoryItems = bindAsyncAction(
+  inventoryAction.addManyInventoryItems,
+  { skipStartedAction: true }
+)(function* (inventoryItems): SagaIterator {
+  const response: AxiosResponse<any> = yield call(
+    inventoryAsync.addManyInventoryItems,
+    inventoryItems
+  );
+  return response.data;
+});
 
-function* deleteOneInventoryItemSaga(action: DeleteOneInventory): SagaIterator {
-  try {
-    const response = yield call(
-      inventoryAsync.deleteOneInventoryItem,
-      action.payload
-    );
-    yield put(inventoryActionCreators.deleteOneInventorySuccess(response.data));
-  } catch (error) {
-    yield put(inventoryActionCreators.deleteOneInventoryError(error as string));
-    console.error();
-  }
-}
+const deleteOneInventoryItem = bindAsyncAction(
+  inventoryAction.deleteOneInventory,
+  { skipStartedAction: true }
+)(function* (id): SagaIterator {
+  const response: AxiosResponse<Inventory> = yield call(
+    inventoryAsync.deleteOneInventoryItem,
+    id
+  );
+  return response.data;
+});
 
-function* updateOneInventoryItemSaga(
-  action: UpdateOneInventoryItem
-): SagaIterator {
-  try {
-    const response = yield call(
-      inventoryAsync.updateOneInventoryItem,
-      action.payload
-    );
-    yield put(
-      inventoryActionCreators.updateInventoryItemSuccess(response.data)
-    );
-  } catch (error) {
-    yield put(
-      inventoryActionCreators.updateInventoryItemError(error as string)
-    );
-    console.error();
-  }
-}
+const updateInventoryItem = bindAsyncAction(
+  inventoryAction.updateInventoryItem,
+  { skipStartedAction: true }
+)(function* (inventoryItem): SagaIterator {
+  const response: AxiosResponse<Inventory> = yield call(
+    inventoryAsync.updateOneInventoryItem,
+    inventoryItem
+  );
+  return response.data;
+});
 
 function* allInventoryWatcherSaga() {
-  yield takeLatest(InventoryActionTypes.GET_ALL_INVENTORY, allInventorySaga);
+  yield takeLatest(inventoryAction.getAllInventory.started, allInventory);
 }
 function* freeInventoryWatcherSaga() {
-  yield takeLatest(InventoryActionTypes.GET_FREE_INVENTORY, freeInventorySaga);
+  yield takeLatest(inventoryAction.getFreeInventory.started, freeInventory);
 }
 function* makeInventoryWatcherSaga() {
-  yield takeLatest(InventoryActionTypes.MAKE_AN_INVENTORY, makeInventorySaga);
+  yield takeLatest(
+    inventoryAction.makeInventory.started,
+    (action: Action<Inventory[]>) => {
+      return makeInventory(action.payload);
+    }
+  );
 }
 function* addOneInventoryWatcherSaga() {
   yield takeLatest(
-    InventoryActionTypes.ADD_ONE_INVENTORY,
-    addOneInventoryItemSaga
+    inventoryAction.addOneInventoryItem.started,
+    (action: Action<Inventory>) => {
+      return addOneInventoryItem(action.payload);
+    }
   );
 }
 function* addManyInventoryWatcherSaga() {
   yield takeLatest(
-    InventoryActionTypes.ADD_MANY_INVENTORY,
-    addManyInventoryItemsSaga
+    inventoryAction.addManyInventoryItems.started,
+    (action: Action<Inventory[]>) => {
+      return addManyInventoryItems(action.payload);
+    }
   );
 }
 function* deleteOneInventoryWatcherSaga() {
   yield takeLatest(
-    InventoryActionTypes.DELETE_ONE_INVENTORY,
-    deleteOneInventoryItemSaga
+    inventoryAction.deleteOneInventory.started,
+    (action: Action<number>) => {
+      return deleteOneInventoryItem(action.payload);
+    }
   );
 }
 function* updateOneInventoryWatcherSaga() {
   yield takeLatest(
-    InventoryActionTypes.UPDATE_ONE_INVENTORY,
-    updateOneInventoryItemSaga
+    inventoryAction.updateInventoryItem.started,
+    (action: Action<Inventory>) => {
+      return updateInventoryItem(action.payload);
+    }
   );
 }
 export function* inventorySagas() {
