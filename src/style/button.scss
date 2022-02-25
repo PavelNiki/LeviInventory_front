@@ -1,0 +1,28 @@
+@import "_variables.scss";
+
+.custom-button {
+  background-color: $primary-color-orange;
+  color: $primary-color-white;
+  border-color: $primary-color-orange;
+
+  &:hover {
+    background-color: #fa9569;
+    color: $primary-color-white;
+    border-color: $primary-color-orange;
+  }
+  &::selection {
+    background: $primary-button-select;
+    border-color: $primary-button-select;
+  }
+  &--last {
+    &::after {
+      content: "";
+      border-right: 1px solid $light-color-4;
+      height: 40px;
+      position: absolute;
+      top: 0px;
+      right: -29px;
+    }
+    @extend .custom-button;
+  }
+}

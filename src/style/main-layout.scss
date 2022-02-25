@@ -1,3 +1,65 @@
+@import "_variables.scss";
 body {
   font-family: "Rubick", serif;
+}
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: $primary-color-black;
+  max-width: 100%;
+  height: 80px;
+  padding: 10px 150px;
+  &--title {
+    align-items: center;
+    & .ant-typography {
+      color: $primary-color-white;
+      font-weight: 700;
+    }
+  }
+  &--tabs {
+    align-items: center;
+    background-color: $primary-color-black;
+    max-height: 80px;
+    & .ant-tabs-nav-wrap {
+      background-color: $primary-color-black;
+      max-height: 80px;
+    }
+    & .ant-tabs-tab {
+      background-color: $primary-color-black !important;
+      color: $dark-color-3;
+      border: none !important;
+      & .ant-tabs-tab-btn {
+        background-color: $primary-color-black;
+        min-width: 80px;
+        text-align: center;
+        align-self: baseline;
+        padding: 20px 0;
+        &:hover {
+          color: $primary-color-blue;
+        }
+      }
+      &-active {
+        background-color: #363a4b !important;
+        max-height: 80px;
+        & .ant-tabs-tab-btn {
+          color: $primary-color-white !important;
+          background-color: #363a4b !important;
+        }
+      }
+    }
+  }
+  &--search {
+    max-width: 300px;
+    & .ant-input-affix-wrapper {
+      background-color: #363a4b;
+      border: 1px #363a4b solid;
+      & .ant-input {
+        background-color: #363a4b;
+      }
+    }
+  }
+}
+.app-main-content {
+  padding: 15% 15%;
 }

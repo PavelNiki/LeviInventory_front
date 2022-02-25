@@ -1,0 +1,16 @@
+@import "_variables.scss";
+.card-list {
+  display: grid;
+  //   padding: 1%;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  border: 1px solid $light-color-4;
+  border-radius: 10px;
+  & > div:not(:nth-child(3n + 3)) {
+    border-right: 1px solid $light-color-4;
+  }
+
+  & > div:nth-child(-n + 3) {
+    border-bottom: 1px solid $light-color-4;
+  }
+}

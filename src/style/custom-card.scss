@@ -1,0 +1,13 @@
+@import "_variables.scss";
+.card-item {
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  & .ant-card-body {
+    display: flex;
+    flex-direction: column;
+    & .custom-button {
+      align-self: flex-end;
+    }
+  }
+}

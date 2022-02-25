@@ -4,13 +4,20 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { store } from "./store/store";
 import { Provider } from "react-redux";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Page404 from "./pages/404";
 
 ReactDOM.render(
-  <Provider store={store}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </Provider>,
+  <BrowserRouter>
+    <Provider store={store}>
+      <React.StrictMode>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="*" element={<Page404 />} />
+        </Routes>
+      </React.StrictMode>
+    </Provider>
+  </BrowserRouter>,
   document.getElementById("root")
 );
 

@@ -9,7 +9,7 @@ const initialState: InventoryState = {
   inventoryList: null,
   error: null,
 };
-export const invenoryReducer = reducerWithInitialState(initialState)
+export const inventoryReducer = reducerWithInitialState(initialState)
   .case(
     inventoryAction.addManyInventoryItems.started,
     (state): InventoryState => {
