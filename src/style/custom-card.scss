@@ -6,8 +6,21 @@
   & .ant-card-body {
     display: flex;
     flex-direction: column;
+    & .ant-typography {
+      margin-top: 30%;
+      margin-bottom: 0;
+    }
     & .custom-button {
       align-self: flex-end;
+      color: $primary-color-blue;
+      background-color: $status-inActive;
+      border-color: $status-inActive;
+      font-weight: 500;
+      font-size: 14px;
+      border-radius: 5px;
+      & > span {
+        margin: 0 5px;
+      }
     }
   }
 }

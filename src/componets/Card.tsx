@@ -10,7 +10,7 @@ const CustomCard: FC<CardProps> = ({ roomName }) => {
   const handleClick = () => {};
   return (
     <Card className="card-item">
-      <CustomButton name="Edit" type="text" event={handleClick} size="middle" />
+      <CustomButton name="Edit" type="text" event={handleClick} size="large" />
       <Title level={3}>{roomName}</Title>
     </Card>
   );

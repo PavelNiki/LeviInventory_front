@@ -1,16 +1,7 @@
-import CustomCard from "./Card";
 import "../style/card-list.scss";
+import { FC } from "react";
 
-const CardList = () => {
-  return (
-    <div className="card-list">
-      <CustomCard roomName="test" />
-      <CustomCard roomName="test" />
-      <CustomCard roomName="test" />
-      <CustomCard roomName="test" />
-      <CustomCard roomName="test" />
-      <CustomCard roomName="test" />
-    </div>
-  );
+const CardList: FC = ({ children }) => {
+  return <div className="card-list">{children}</div>;
 };
 export default CardList;
